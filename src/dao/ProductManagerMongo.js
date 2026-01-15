@@ -1,4 +1,4 @@
-import { ProductModel } from "../models/product.model.js";
+import ProductModel from "../models/product.model.js";
 
 export default class ProductManagerMongo {
 
@@ -6,16 +6,15 @@ export default class ProductManagerMongo {
     return await ProductModel.paginate(filter, options);
   }
 
-  async getProductById(id) {
-    return await ProductModel.findById(id);
-  }
-
-  async createProduct(productData) {
-    return await ProductModel.create(productData);
+  async addProduct(product) {
+    return await ProductModel.create(product);
   }
 
   async deleteProduct(id) {
     return await ProductModel.findByIdAndDelete(id);
   }
 
+  async getProductById(id) {
+    return await ProductModel.findById(id).lean();
+  }
 }
