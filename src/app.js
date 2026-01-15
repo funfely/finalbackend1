@@ -1,35 +1,50 @@
 import express from "express";
-import handlebars from "express-handlebars";
-import "./config/db.js";
+import { engine } from "express-handlebars";
+import path from "path";
+import { fileURLToPath } from "url";
 
-import productsRouter from "./routes/products.router.js";
-import cartsRouter from "./routes/carts.router.js";
+import "./config/db.js";
 import viewsRouter from "./routes/views.router.js";
+
+// Necesario para __dirname en ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
-/* ======================
+/* =========================
    MIDDLEWARES
-====================== */
+========================= */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* ======================
+/* =========================
    HANDLEBARS
-====================== */
+========================= */
 app.engine(
   "handlebars",
-  handlebars.engine()
+  engine({
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true,
+      allowProtoMethodsByDefault: true,
+    },
+  })
 );
+
 app.set("view engine", "handlebars");
-app.set("views", "./src/views");
+app.set("views", path.join(__dirname, "views"));
 
-/* ======================
+/* =========================
+   STATIC FILES
+========================= */
+app.use(express.static(path.join(__dirname, "public")));
+
+/* =========================
    ROUTES
-====================== */
+========================= */
 app.use("/", viewsRouter);
-app.use("/api/products", productsRouter);
-app.use("/api/carts", cartsRouter);
 
+/* =========================
+   EXPORT
+========================= */
 export default app;
-
